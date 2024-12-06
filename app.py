@@ -30,5 +30,16 @@ def echo():
     return request.data.decode()
 
 
+@app.route("/api/v0/benchmark", methods=["POST"])
+def benchmark():
+    size_to_response = 0
+    try:
+        size_to_response = int(request.data.decode())
+    except ValueError:
+        pass
+
+    return "X" * size_to_response
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
