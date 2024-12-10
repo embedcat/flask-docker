@@ -34,11 +34,16 @@ def echo():
 def benchmark():
     size_to_response = 0
     try:
-        size_to_response = int(request.data.decode())
-    except ValueError:
+        for item in request.data.decode().split(","):
+            if "len=" in item:
+                size_to_response = int(item.split("=")[-1])
+                break
+    except Exception:
         pass
 
-    return "X" * size_to_response
+    size_of_number = len(str(size_to_response))
+
+    return "X" * (size_to_response - size_of_number) + str(size_to_response) if size_to_response else "ok"
 
 
 if __name__ == "__main__":
