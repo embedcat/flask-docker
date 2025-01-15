@@ -4,6 +4,11 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
+CUSTOM_OTA_FILENAME = "device_list.txt"
+CUSTOM_OTA_URL = "vending.kit-invest.ru/Download/kpl/to4ver"
+CUSTOM_OTA_PORT = 80
+
+
 @app.route("/api/v0/ping", methods=["POST"])
 def ping():
     return {"Result": "Ok"}
@@ -44,6 +49,34 @@ def benchmark():
     size_of_number = len(str(size_to_response))
 
     return "X" * (size_to_response - size_of_number) + str(size_to_response) if size_to_response else "ok"
+
+
+@app.route("/api/v0/get_ota_url", methods=["GET"])
+def get_ota_url():
+    serial_number_list = []
+    serial_number = 0
+    try:
+        serial_number = int(request.data.decode())
+        with open(CUSTOM_OTA_FILENAME, "r") as f:
+            for line in f:
+                serial_number_list.append(int(line.strip()))
+    except Exception as e:
+        return {"Result": "Fail", "Error": str(e)}
+
+    return {"Result": "Ok", "Source": "Custom", "Url": CUSTOM_OTA_URL, "Port": CUSTOM_OTA_PORT} if serial_number in serial_number_list else {"Result": "Ok", "Source": "Defualt"}
+
+
+@app.route("/api/v0/add_to_custom_ota", methods=["POST"])
+def add_to_custom_ota():
+    serial_number = 0
+    try:
+        serial_number = int(request.data.decode())
+        with open(CUSTOM_OTA_FILENAME, "a") as f:
+            f.write(str(serial_number) + "\n")
+    except Exception as e:
+        return {"Result": "Fail", "Error": str(e)}
+
+    return {"Result": "Ok"}
 
 
 if __name__ == "__main__":
