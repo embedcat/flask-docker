@@ -5,8 +5,9 @@ app = Flask(__name__)
 
 
 CUSTOM_OTA_FILENAME = "device_list.txt"
-CUSTOM_OTA_URL = "vending.kit-invest.ru/Download/kpl/to4ver"
-CUSTOM_OTA_PORT = 80
+CUSTOM_OTA_URL = "176.57.218.132"
+CUSTOM_OTA_PORT = 7000
+CUSTOM_OTA_NAME = "KitPosLite.bin"
 
 
 @app.route("/api/v0/ping", methods=["POST"])
@@ -63,7 +64,7 @@ def get_ota_url():
     except Exception as e:
         return {"Result": "Fail", "Error": str(e)}
 
-    return {"Result": "Ok", "Source": "Custom", "Url": CUSTOM_OTA_URL, "Port": CUSTOM_OTA_PORT} if serial_number in serial_number_list else {"Result": "Ok", "Source": "Defualt"}
+    return {"Result": "Ok", "Source": "Custom", "Url": CUSTOM_OTA_URL, "Port": CUSTOM_OTA_PORT, "Filename": CUSTOM_OTA_FILENAME} if serial_number in serial_number_list else {"Result": "Ok", "Source": "Defualt"}
 
 
 @app.route("/api/v0/add_to_custom_ota", methods=["POST"])
